@@ -4,7 +4,7 @@ import { DISTRICTS, calculateDistance } from './utils.js';
 // TODO: Replace 'YOUR_PYTHONANYWHERE_USERNAME' with your actual PythonAnywhere username
 export const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:8000'
-  : 'https://YOUR_PYTHONANYWHERE_USERNAME.pythonanywhere.com';
+  : 'https://laso.pythonanywhere.com';
 export const USE_MOCK_API = false; // Toggle to false to enforce real API requests
 
 // --- Mock Database Initializer ---
