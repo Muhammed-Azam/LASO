@@ -199,49 +199,11 @@ export async function registerUser(userData) {
       body: JSON.stringify(userData)
     });
   } catch (error) {
-    // Show the real backend error message instead of silently using mock data
     throw new Error(error.message || 'Registration failed. Please check your details and try again.');
-    if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
-      throw new Error('An account with this email already exists');
-    }
-  }
-
-    const newId = (userData.userType === 'customer' ? 'c' : 'p') + (users.length + 1);
-    const newUser = { id: newId, ...userData };
-    users.push(newUser);
-    localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
-
-    if (userData.userType === 'provider') {
-      const providers = JSON.parse(localStorage.getItem(MOCK_PROVIDERS_KEY));
-      providers.push({
-        id: newId,
-        name: userData.name,
-        email: userData.email,
-        phone: userData.phone,
-        userType: 'provider',
-        serviceType: userData.serviceType,
-        district: userData.district,
-        address: userData.address,
-        lat: parseFloat(userData.lat),
-        lon: parseFloat(userData.lon),
-        description: userData.description || '',
-        avgRating: 5.0,
-        reviewsCount: 0
-      });
-      localStorage.setItem(MOCK_PROVIDERS_KEY, JSON.stringify(providers));
-    }
-
-    return {
-      userId: newId,
-      userType: userData.userType,
-      name: userData.name,
-      email: userData.email,
-      phone: userData.phone || '',
-      district: userData.district,
-      address: userData.address || ''
-    };
   }
 }
+
+
 
 export async function fetchNearbyProviders(lat, lon, district, serviceCategory = '', searchKeyword = '') {
   try {
