@@ -288,6 +288,8 @@ export async function fetchNearbyProviders(lat, lon, district, serviceCategory =
 
 export async function fetchProviderDetails(providerId) {
   try {
+    // Try by-user endpoint first (for provider dashboard), fallback to provider_id
+    try { return await request(`/api/provider/by-user/${providerId}`); } catch(_) {}
     return await request(`/api/provider/${providerId}`);
   } catch (error) {
     await delay();
