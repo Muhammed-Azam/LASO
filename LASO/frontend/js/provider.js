@@ -1,6 +1,6 @@
 import { checkAuth, DISTRICTS, SERVICES, getQueryParams, getStarsHTML } from './utils.js';
 import { initHeader, initBottomNav } from './components.js';
-import { fetchProviderDetails, fetchProviderProfile, updateProviderProfile, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
+import { fetchProviderProfileByUserId, fetchProviderProfile, ... } from './api.js';
 
 let currentUser = null;
 
@@ -28,7 +28,7 @@ async function initDashboardPage() {
   const reviewsSummaryContainer = document.getElementById('reviews-summary-list');
 
   try {
-    const provider = await fetchProviderDetails(currentUser.userId);
+    const provider = await fetchProviderProfileByUserId(currentUser.userId);
     const category = SERVICES.find(s => s.id === provider.serviceType);
     const categoryEmoji = category ? category.emoji : '🛠️';
     const categoryName = category ? category.name : provider.serviceType;
