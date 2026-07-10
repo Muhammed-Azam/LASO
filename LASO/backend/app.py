@@ -393,7 +393,7 @@ def register():
     elif data['userType'] == 'provider':
         lat = data.get('lat')
         lon = data.get('lon')
-         district = data.get('district', '')
+        district = data.get('district', '')
         # If address does not already contain the district name, prepend it
         address = data['address']
         if district and district.lower() not in address.lower():
