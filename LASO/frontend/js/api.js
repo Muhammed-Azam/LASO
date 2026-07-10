@@ -204,6 +204,7 @@ export async function registerUser(userData) {
     if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
       throw new Error('An account with this email already exists');
     }
+  }
 
     const newId = (userData.userType === 'customer' ? 'c' : 'p') + (users.length + 1);
     const newUser = { id: newId, ...userData };
