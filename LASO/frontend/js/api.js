@@ -199,8 +199,8 @@ export async function registerUser(userData) {
       body: JSON.stringify(userData)
     });
   } catch (error) {
-    await delay();
-    const users = JSON.parse(localStorage.getItem(MOCK_USERS_KEY));
+    // Show the real backend error message instead of silently using mock data
+    throw new Error(error.message || 'Registration failed. Please check your details and try again.');
     if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
       throw new Error('An account with this email already exists');
     }
