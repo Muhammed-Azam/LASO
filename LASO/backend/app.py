@@ -297,7 +297,7 @@ def map_provider_for_frontend(p):
     user_record = db.get_user_by_id(p['user_id'])
     email = user_record['email'] if user_record else ""
 
-      district = get_district_from_address_or_coords(p['address'], p.get('latitude'), p.get('longitude'))
+    district = get_district_from_address_or_coords(p['address'], p.get('latitude'), p.get('longitude'))
     
     return {
         'id': p['provider_id'],
