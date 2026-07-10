@@ -532,6 +532,8 @@ def get_provider_by_user(user_id):
     """Get provider profile using user_id (used by provider dashboard)"""
     p = db.get_provider_by_user_id(user_id)
     if not p:
+        p = db.get_provider_by_user_id(provider_id)
+    if not p:
         return jsonify({'message': 'Provider not found'}), 404
     mapped_p = map_provider_for_frontend(p)
     db_reviews = db.get_provider_reviews(p['provider_id'])
