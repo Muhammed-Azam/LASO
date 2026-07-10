@@ -288,8 +288,6 @@ export async function fetchNearbyProviders(lat, lon, district, serviceCategory =
 
 export async function fetchProviderDetails(providerId) {
   try {
-    // Try by-user endpoint first (for provider dashboard), fallback to provider_id
-    try { return await request(`/api/provider/by-user/${providerId}`); } catch(_) {}
     return await request(`/api/provider/${providerId}`);
   } catch (error) {
     await delay();
@@ -305,6 +303,26 @@ export async function fetchProviderDetails(providerId) {
       reviews: providerReviews
     };
   }
+}
+
+export async function fetchProviderProfileByUserId(userId) {
+  try {
+    return await request(`/api/provider/by-user/${userId}`);
+  } catch (error) {
+    await delay();
+    const providers = JSON.parse(localStorage.getItem(MOCK_PROVIDERS_KEY));
+    const provider = providers.find(p => p.id === userId || p.id === 'p' + userId);
+    if (!provider) throw new Error('Provider not found');
+
+    const reviews = JSON.parse(localStorage.getItem(MOCK_REVIEWS_KEY));
+    const providerReviews = reviews.filter(r => r.providerId === provider.id);
+
+    return {
+      ...provider,
+      reviews: providerReviews
+    };
+  }
+}
 }
 
 export async function submitReview(providerId, rating, comment) {
