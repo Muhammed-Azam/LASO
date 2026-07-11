@@ -362,6 +362,25 @@ export async function fetchUserProfile(userId) {
   }
 }
 
+export async function updateProviderProfile(userId, profileData) {
+  try {
+    return await request('/api/provider/profile/update', {
+      method: 'POST',
+      body: JSON.stringify({ id: userId, ...profileData })
+    });
+  } catch (error) {
+    await delay();
+    // Fallback: update in mock localStorage
+    const providers = JSON.parse(localStorage.getItem(MOCK_PROVIDERS_KEY)) || [];
+    const idx = providers.findIndex(p => p.id === userId || p.id === 'p' + userId);
+    if (idx !== -1) {
+      providers[idx] = { ...providers[idx], ...profileData };
+      localStorage.setItem(MOCK_PROVIDERS_KEY, JSON.stringify(providers));
+    }
+    return { success: true };
+  }
+}
+
 export async function fetchConversations(userId) {
   try {
     // Member 4 endpoint
