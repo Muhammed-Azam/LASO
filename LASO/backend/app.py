@@ -586,30 +586,33 @@ def get_provider_by_user(user_id):
     mapped_p['reviews'] = formatted_reviews
     return jsonify(mapped_p)
 
-@app.route('/api/review', methods=['POST'])
-def add_review():
-    """Submit a rating and comment for a provider using Member 1's DB average updates"""
-    data = request.get_json()
-    provider_id = data.get('provider_id')
-    customer_user_id = data.get('customer_id') # user_id from frontend
-    rating = int(data.get('rating', 5))
-    comment = data.get('comment', '')
-
-    # 1. Look up SQLite customer_id using user_id
-    customer = db.get_customer_by_user_id(customer_user_id)
-    if not customer:
-        return jsonify({'success': False, 'message': 'Customer profile not found'}), 404
-    customer_id = customer['customer_id']
-
-    # 2. Save review to SQLite (database class automatically updates the provider's score!)
-    success, message = db.add_review(
-        provider_id=provider_id,
-        customer_id=customer_id,
-        rating=rating,
-        comment=comment
-    )
-
-    return jsonify({'success': success, 'message': message})
+@app.route('/api/user/<int:user_id>', methods=['GET'])
+def get_user_details(user_id):
+    """Get any user's basic profile details (customer or provider) by user_id"""
+    # Try fetching as customer first
+    c = db.get_customer_by_user_id(user_id)
+    if c:
+        return jsonify({
+            'userId': user_id,
+            'userType': 'customer',
+            'name': c['full_name'],
+            'phone': c['phone'],
+            'address': c['address'] or ''
+        })
+    # Fallback to provider profile
+    p = db.get_provider_by_user_id(user_id)
+    if p:
+        mapped = map_provider_for_frontend(p)
+        return jsonify({
+            'userId': user_id,
+            'userType': 'provider',
+            'name': mapped['name'],
+            'phone': mapped['phone'],
+            'address': mapped['address'],
+            'serviceType': mapped['serviceType']
+        })
+    # If not found at all
+    return jsonify({'message': 'User not found'}), 404
 
 @app.route('/api/provider/profile', methods=['GET'])
 def get_provider_profile():
