@@ -659,8 +659,43 @@ def get_conversations():
     user_id_val = request.args.get('user_id')
     if not user_id_val:
         return jsonify({'message': 'Missing user_id'}), 400
-    
-    conversations = db.get_conversations(int(user_id_val))
+
+    uid = int(user_id_val)
+
+    import sqlite3 as _sqlite3
+    with _sqlite3.connect(db.db_path) as conn:
+        conn.row_factory = _sqlite3.Row
+        cursor = conn.cursor()
+        # Get all messages involving this user
+        cursor.execute(
+            "SELECT * FROM messages WHERE sender_id=? OR receiver_id=? ORDER BY created_at DESC",
+            (uid, uid)
+        )
+        rows = [dict(r) for r in cursor.fetchall()]
+
+    # Group by partner
+    seen = {}
+    for row in rows:
+        partner_id = row['receiver_id'] if row['sender_id'] == uid else row['sender_id']
+        if partner_id not in seen:
+            # Look up partner name
+            partner_name = 'Unknown'
+            c = db.get_customer_by_user_id(partner_id)
+            if c:
+                partner_name = c['full_name']
+            else:
+                p = db.get_provider_by_user_id(partner_id)
+                if p:
+                    partner_name = p['business_name']
+            seen[partner_id] = {
+                'partnerId': partner_id,
+                'partnerName': partner_name,
+                'lastMessage': row['message'],
+                'timestamp': row['created_at'],
+                'partnerService': p['service_type'] if (not c and p) else ''
+            }
+
+    conversations = sorted(seen.values(), key=lambda x: x['timestamp'], reverse=True)
     return jsonify(conversations)
 
 @app.route('/api/messages/thread', methods=['GET'])
@@ -672,7 +707,31 @@ def get_message_thread():
     if not user_id_val or not partner_id_val:
         return jsonify({'message': 'Missing user_id or partner_id'}), 400
 
-    history = db.get_chat_history(int(user_id_val), int(partner_id_val))
+    uid = int(user_id_val)
+    pid = int(partner_id_val)
+
+    import sqlite3 as _sqlite3
+    with _sqlite3.connect(db.db_path) as conn:
+        conn.row_factory = _sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT * FROM messages
+               WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?)
+               ORDER BY created_at ASC""",
+            (uid, pid, pid, uid)
+        )
+        rows = [dict(r) for r in cursor.fetchall()]
+
+    # Format for frontend
+    history = [{
+        'id': r['message_id'],
+        'senderId': r['sender_id'],
+        'receiverId': r['receiver_id'],
+        'text': r['message'],
+        'timestamp': r['created_at'],
+        'isRead': bool(r['is_read'])
+    } for r in rows]
+
     return jsonify(history)
 
 @app.route('/api/message', methods=['POST'])
