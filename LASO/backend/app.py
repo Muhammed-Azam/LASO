@@ -510,17 +510,29 @@ def get_nearby_providers():
                 category=service or None,
                 radius=15.0 # default radius limit
             )
+            
+            # Apply district filter
+            if district:
+                results = [r for r in results if r.get('district', '').lower() == district.lower()]
+                
+            # Apply keyword search filter
+            if query:
+                q = query.lower()
+                results = [r for r in results if q in r.get('name', '').lower() or q in r.get('description', '').lower() or q in r.get('category', '').lower()]
+                
             return jsonify(results)
         except ValueError:
             pass # fallback if coords are not floats
 
     # Fallback to simple filtering if coordinates are absent
     filtered = mapped_providers
+    if district:
+        filtered = [p for p in filtered if p.get('district', '').lower() == district.lower()]
     if service:
         filtered = [p for p in filtered if p['category'].lower() == service.lower()]
     if query:
         q = query.lower()
-        filtered = [p for p in filtered if q in p['name'].lower() or q in p['description'].lower()]
+        filtered = [p for p in filtered if q in p['name'].lower() or q in p['description'].lower() or q in p['category'].lower()]
         
     return jsonify(filtered)
 
