@@ -1,6 +1,7 @@
 import { checkAuth, DISTRICTS, SERVICES, getQueryParams, getStarsHTML, calculateDistance } from './utils.js';
 import { initHeader, initBottomNav } from './components.js';
 import { fetchNearbyProviders, fetchProviderDetails, submitReview, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
+import { fetchNearbyProviders, fetchProviderDetails, fetchUserProfile, submitReview, ... } from './api.js';
 
 let currentUser = null;
 let currentCoords = null;
@@ -279,7 +280,7 @@ async function initProviderDetailPage() {
     `;
 
     document.getElementById('btn-message').addEventListener('click', () => {
-      window.location.href = `messages.html?contactId=${provider.id}`;
+      window.location.href = `messages.html?contactId=${provider.user_id}`;
     });
 
     document.getElementById('btn-review-redirect').addEventListener('click', () => {
@@ -428,7 +429,7 @@ async function initChatThreadView(partnerId) {
   let partnerName = 'Provider';
   let partnerEmoji = '🛠️';
   try {
-    const details = await fetchProviderDetails(partnerId);
+    const details = await fetchUserProfile(partnerId);
     partnerName = details.name;
     const cat = SERVICES.find(s => s.id === details.serviceType);
     partnerEmoji = cat ? cat.emoji : '🛠️';
