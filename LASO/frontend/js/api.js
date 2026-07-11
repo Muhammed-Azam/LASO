@@ -343,38 +343,22 @@ export async function fetchProviderProfile(providerId) {
   }
 }
 
-export async function updateProviderProfile(providerId, profileData) {
+export async function fetchUserProfile(userId) {
   try {
-    return await request(`/api/provider/profile/update`, {
-      method: 'POST',
-      body: JSON.stringify({ id: providerId, ...profileData })
-    });
+    return await request(`/api/user/${userId}`);
   } catch (error) {
     await delay();
-    // Update provider details in both lists
-    const providers = JSON.parse(localStorage.getItem(MOCK_PROVIDERS_KEY));
-    const pIdx = providers.findIndex(p => p.id === providerId);
-    if (pIdx !== -1) {
-      providers[pIdx] = { ...providers[pIdx], ...profileData };
-      localStorage.setItem(MOCK_PROVIDERS_KEY, JSON.stringify(providers));
-    }
-
-    const users = JSON.parse(localStorage.getItem(MOCK_USERS_KEY));
-    const uIdx = users.findIndex(u => u.id === providerId);
-    if (uIdx !== -1) {
-      users[uIdx] = { ...users[uIdx], ...profileData };
-      localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
-      
-      // Update session storage if modifying active provider
-      const sessionUser = JSON.parse(localStorage.getItem('laso_session_user'));
-      if (sessionUser && sessionUser.userId === providerId) {
-        sessionUser.district = profileData.district || sessionUser.district;
-        sessionUser.address = profileData.address || sessionUser.address;
-        localStorage.setItem('laso_session_user', JSON.stringify(sessionUser));
-      }
-    }
-
-    return { success: true };
+    const users = JSON.parse(localStorage.getItem(MOCK_USERS_KEY)) || [];
+    const providers = JSON.parse(localStorage.getItem(MOCK_PROVIDERS_KEY)) || [];
+    const u = users.find(usr => usr.id === userId || usr.id === 'c' + userId) || 
+              providers.find(p => p.id === userId || p.id === 'p' + userId);
+    if (!u) throw new Error('User not found');
+    return {
+      userId: u.id,
+      name: u.name,
+      userType: u.userType,
+      serviceType: u.serviceType || ''
+    };
   }
 }
 
