@@ -427,12 +427,25 @@ async function initChatThreadView(partnerId) {
 
   let partnerName = 'Provider';
   let partnerEmoji = '🛠️';
+  let providerDetailId = null;
   try {
     const details = await fetchUserProfile(partnerId);
     partnerName = details.name;
     const cat = SERVICES.find(s => s.id === details.serviceType);
     partnerEmoji = cat ? cat.emoji : '🛠️';
+    // Try to get the provider_id for the detail page link
+    if (details.userType === 'provider') {
+      try {
+        const provDetails = await fetchProviderDetails(partnerId);
+        providerDetailId = provDetails.id;
+      } catch(e) {}
+    }
   } catch (e) {}
+
+  // Build profile link if it's a provider
+  const profileLink = providerDetailId
+    ? `onclick="window.location.href='provider-detail.html?id=${providerDetailId}'" style="cursor:pointer;"`
+    : '';
 
   // Inject structural HTML for chat thread
   container.innerHTML = `
@@ -440,9 +453,9 @@ async function initChatThreadView(partnerId) {
       <div style="font-size: 24px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;">
         ${partnerEmoji}
       </div>
-      <div>
-        <h4 style="font-size: 14px; font-weight: 700; margin: 0;">${partnerName}</h4>
-        <span style="font-size: 11px; color: var(--text-secondary);">Online</span>
+      <div ${profileLink}>
+        <h4 style="font-size: 14px; font-weight: 700; margin: 0; ${providerDetailId ? 'color: var(--primary); text-decoration: underline;' : ''}">${partnerName}</h4>
+        <span style="font-size: 11px; color: var(--text-secondary);">${providerDetailId ? 'Tap to view profile' : 'Online'}</span>
       </div>
     </div>
     

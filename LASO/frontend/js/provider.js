@@ -295,7 +295,7 @@ async function initChatThreadView(partnerId) {
       <div style="font-size: 24px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;">
         👤
       </div>
-      <div>
+      <div style="cursor: default;">
         <h4 style="font-size: 14px; font-weight: 700; margin: 0;">${customerName}</h4>
         <span style="font-size: 11px; color: var(--text-secondary);">Client inquiry</span>
       </div>
