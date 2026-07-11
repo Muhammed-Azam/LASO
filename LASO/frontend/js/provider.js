@@ -1,6 +1,7 @@
 import { checkAuth, DISTRICTS, SERVICES, getQueryParams, getStarsHTML } from './utils.js';
 import { initHeader, initBottomNav } from './components.js';
 import { fetchProviderProfileByUserId, fetchProviderProfile, updateProviderProfile, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
+import { fetchProviderProfileByUserId, fetchProviderProfile, fetchUserProfile, updateProviderProfile, ... } from './api.js';
 
 let currentUser = null;
 
@@ -286,9 +287,8 @@ async function initChatThreadView(partnerId) {
 
   let customerName = 'Customer';
   try {
-    const users = JSON.parse(localStorage.getItem('laso_mock_users')) || [];
-    const u = users.find(usr => usr.id === partnerId);
-    if (u) customerName = u.name;
+    const details = await fetchUserProfile(partnerId);
+    customerName = details.name;
   } catch (e) {}
 
   container.innerHTML = `
