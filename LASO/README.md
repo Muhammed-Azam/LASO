@@ -61,3 +61,6 @@ python backend/test_integration.py
 
 ### 5. Launch the Frontend
 The frontend can be loaded directly from the `frontend/` directory. Since it uses ES modules, it should be served via an HTTP server. See [frontend/README.md](file:///C:/Users/Azaam/.gemini/antigravity/scratch/LASO/frontend/README.md) for detailed serving options (e.g. Live Server or Python `http.server`).
+
+
+edited
