@@ -286,7 +286,6 @@ export async function fetchProviderProfileByUserId(userId) {
     };
   }
 }
-}
 
 export async function submitReview(providerId, rating, comment) {
   const sessionUser = JSON.parse(localStorage.getItem('laso_session_user'));

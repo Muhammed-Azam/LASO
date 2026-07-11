@@ -585,28 +585,6 @@ def get_provider_by_user(user_id):
         
     mapped_p['reviews'] = formatted_reviews
     return jsonify(mapped_p)
-        
-    mapped_p = map_provider_for_frontend(p)
-
-    # 2. Fetch reviews for provider from SQLite
-    db_reviews = db.get_provider_reviews(provider_id)
-    
-    # 3. Format reviews & look up customer names (needed for frontend UI render)
-    formatted_reviews = []
-    for r in db_reviews:
-        customer = db.get_customer_by_id(r['customer_id'])
-        customer_name = customer['full_name'] if customer else "Anonymous"
-        formatted_reviews.append({
-            'id': r['review_id'],
-            'providerId': r['provider_id'],
-            'customerName': customer_name,
-            'rating': r['rating'],
-            'comment': r['comment'],
-            'date': r['created_at'].split()[0] if r['created_at'] else ""
-        })
-        
-    mapped_p['reviews'] = formatted_reviews
-    return jsonify(mapped_p)
 
 @app.route('/api/review', methods=['POST'])
 def add_review():
