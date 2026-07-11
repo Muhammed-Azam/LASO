@@ -1,7 +1,6 @@
 import { checkAuth, DISTRICTS, SERVICES, getQueryParams, getStarsHTML, calculateDistance } from './utils.js';
 import { initHeader, initBottomNav } from './components.js';
-import { fetchNearbyProviders, fetchProviderDetails, submitReview, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
-import { fetchNearbyProviders, fetchProviderDetails, fetchUserProfile, submitReview, ... } from './api.js';
+import { fetchNearbyProviders, fetchProviderDetails, fetchUserProfile, submitReview, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
 
 let currentUser = null;
 let currentCoords = null;

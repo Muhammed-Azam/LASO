@@ -1,7 +1,6 @@
 import { checkAuth, DISTRICTS, SERVICES, getQueryParams, getStarsHTML } from './utils.js';
 import { initHeader, initBottomNav } from './components.js';
-import { fetchProviderProfileByUserId, fetchProviderProfile, updateProviderProfile, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
-import { fetchProviderProfileByUserId, fetchProviderProfile, fetchUserProfile, updateProviderProfile, ... } from './api.js';
+import { fetchProviderProfileByUserId, fetchProviderProfile, fetchUserProfile, updateProviderProfile, fetchConversations, fetchMessageThread, sendMessage } from './api.js';
 
 let currentUser = null;
 
